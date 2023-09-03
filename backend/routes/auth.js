@@ -1,9 +1,14 @@
 const express = require('express');
+const User = require('../models/User');
+const { default: mongoose } = require('mongoose');
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  let obj = { name: 'Sarika' };
-  res.json(obj);
+// Create a user using :POST "/api/auth/"
+router.post('/', (req, res) => {
+  console.log(req.body);
+  const user = User(req.body);
+  user.save();
+  res.send(user);
 });
 
 module.exports = router;
