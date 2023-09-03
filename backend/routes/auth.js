@@ -7,6 +7,7 @@ const { body, validationResult } = require('express-validator');
 router.post(
   '/createUser',
   [
+    // request data validator using express-validator
     body('name', 'Enter a valid name').isLength({ min: 3 }),
     body('email', 'Enter a valid email').isEmail(),
     body('password', 'Password must be at least 5 character').isLength({
@@ -15,9 +16,11 @@ router.post(
   ],
   async (req, res) => {
     const error = validationResult(req);
+    // return errors if present
     if (!error.isEmpty()) {
       return res.status(400).json({ error: error.array() });
     }
+    // check email in collection, otherwise insert user
     try {
       let user = await User.findOne({ email: req.body.email });
 
@@ -27,22 +30,17 @@ router.post(
             'User with specified email found in db, please specify unique emailid',
         });
       }
+      // user creation
       user = await User.create({
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
       });
 
-      //   .then((user) => res.json(user))
-      //   .catch((err) => {
-      //     console.log(err);
-      //     res.json({
-      //       error: 'Please enter a unique email',
-      //       message: err.message,
-      //     });
-      //   });
+      // return success
       res.json({ flag: 'successful' });
     } catch (error) {
+      // log and return error
       console.log(error);
       res.status(500).send('Some error occured!');
     }
