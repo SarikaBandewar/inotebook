@@ -60,4 +60,47 @@ router.post(
   }
 );
 
+// authenticate a user
+router.post(
+  '/login',
+  [
+    body('email', 'Enter a valid email').isEmail(),
+    body('password', 'Password cannot be blank').exists(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, password } = req.body;
+    try {
+      let user = await User.findOne({ email: email });
+      if (!user) {
+        return res
+          .status(400)
+          .json({ error: 'Please try to login using correct credentials' });
+      }
+
+      const passwordCompare = await bcrypt.compare(password, user.password);
+      if (!passwordCompare) {
+        return res
+          .status(400)
+          .json({ error: 'Please try to login using correct credentials' });
+      }
+
+      const payload = {
+        user: {
+          id: user.id,
+        },
+      };
+      const authToken = jwt.sign(payload, JWT_SECRET);
+      res.json({ authtoken: authToken });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error while login');
+    }
+  }
+);
+
 module.exports = router;
