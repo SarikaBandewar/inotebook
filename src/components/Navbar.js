@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 function Navbar() {
   return (
     <nav
-      className="navbar bg-dark border-bottom border-body"
+      className="navbar navbar-expand-lg bg-body-tertiary"
       data-bs-theme="dark"
     >
       <div className="container-fluid">
@@ -25,7 +25,7 @@ function Navbar() {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <Link className="nav-link active" aria-current="page" to="/home">
+              <Link className="nav-link" aria-current="page" to="/home">
                 Home
               </Link>
             </li>
